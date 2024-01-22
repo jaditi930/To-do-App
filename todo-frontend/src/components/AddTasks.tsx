@@ -4,7 +4,7 @@ interface Task{
   username:string,
   _id:string,
   desc:string,
-  status:string
+  isCompleted:boolean
 }
 
 interface AddProps{
@@ -30,13 +30,14 @@ const AddTasks:FC<AddProps>=(props)=>{
       />
       <input type="button" value="Add task" className="min-w-[60px] bg-blue-500 p-2 rounded-tr-lg rounded-br-lg text-white font-semibold hover:bg-blue-800 transition-colors"
       onClick={(e)=>{
+        
         e.preventDefault();
         fetch("http://localhost:5000/api/todo/add",{
             method:"POST",
             credentials:"include",
             headers:{
             'Content-Type': 'application/json',
-            'Authorization':`Bearer ${props.token}`,
+            'Authorization':`Bearer ${localStorage.getItem("token")}`,
           },
             body:JSON.stringify({
                 "desc":desc
@@ -44,16 +45,10 @@ const AddTasks:FC<AddProps>=(props)=>{
         })
         .then((response)=>response.json())
         .then((data)=>{
-              if(data.status==200){
             props.setTasks([...props.tasks,data])
             props.setAlertMsg("")
-              }
-              else{
-                props.setAlertMsg(data.message)
-              }
+            setdesc("")
         })
-
-        
       }}/>
     </div>
   </div>

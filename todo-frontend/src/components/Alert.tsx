@@ -6,7 +6,7 @@ const Alert:FC<{message:string}>=(props)=>{
     console.log(props.message)
     return (
         <>
-        { props.message!=undefined  ? (
+        { props.message!=""  ? (
         <div className="alert alert-danger">{props.message}</div>
         ):(
             <></>

@@ -13,6 +13,7 @@ const SignUp:FC<SignUpProps>=(props)=>{
     const navigate=useNavigate()
 
     function handleSubmit(e:React.FormEvent<HTMLFormElement>){
+      e.preventDefault()
         fetch("http://localhost:5000/api/user/signup",{
           method:"POST",
           body:JSON.stringify({
@@ -26,10 +27,8 @@ const SignUp:FC<SignUpProps>=(props)=>{
         })
         .then((response)=>response.json())
         .then((data:any)=>{
-          if(data.status==200){
-            navigate("/login")
-          }
-          props.setAlertMsg(data.message)
+            navigate("/")
+          props.setAlertMsg("")
         })
     }
     return (

@@ -72,9 +72,10 @@ router.delete("/delete/:id",expressAsyncHandler(async (req:IRequest,res:Response
 
 }))
 
-router.put("/update/:id",expressAsyncHandler(async (req:IRequest,res:Response)=>{
+router.put("/update/:id/:isCompleted",expressAsyncHandler(async (req:IRequest,res:Response)=>{
     
-    const username=req.user.username
+    const {username}=req.user.username
+    
     if(!username)
     {
         res.status(400).send({
@@ -83,6 +84,7 @@ router.put("/update/:id",expressAsyncHandler(async (req:IRequest,res:Response)=>
     }
 
     const id=req.params.id
+    const isCompleted=req.params.isCompleted
     const task=await ToDo.findOne({_id:id})
 
     if(!task){
@@ -92,10 +94,10 @@ router.put("/update/:id",expressAsyncHandler(async (req:IRequest,res:Response)=>
     }
 
     const updatedTask=await ToDo.findOneAndUpdate({
-    _id:id}, {status:"Completed" })
+    _id:id}, {isCompleted: isCompleted})
 
     res.status(200).send({
-        "message":"Task updated successfully"
+        "updatedTask":updatedTask
     })
 
 }))

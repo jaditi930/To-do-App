@@ -8,7 +8,7 @@ interface Task{
     username:string,
     _id:string,
     desc:string,
-    status:string
+    isCompleted:boolean
 }
 
 interface HomeProps{

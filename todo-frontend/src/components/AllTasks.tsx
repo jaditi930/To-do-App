@@ -6,7 +6,7 @@ interface Task{
     username:string,
     _id:string,
     desc:string,
-    status:string
+    isCompleted:boolean
 }
 
 interface TaskProps{
@@ -20,14 +20,17 @@ interface TaskProps{
 
 const AllTasks:FC<TaskProps>=(props)=>{
 
-    const [completed,setCompleted]=useState<Array<boolean>>([])
 
     function handleCheckBox(e:React.ChangeEvent<HTMLInputElement>,i:number,id:string){
+        let taskToUpdate:Task|undefined=props.tasks.find((task)=>task._id==id)
+        if(taskToUpdate === undefined) 
+        return;
+        taskToUpdate.isCompleted=e.target.checked
+        console.log(taskToUpdate)
+        props.setTasks([...props.tasks.slice(0, i),taskToUpdate,
+            ...props.tasks.slice(i + 1)]);
 
-        setCompleted([...completed.slice(0, i),e.target.checked,
-            ...completed.slice(i + 1)]);
-
-    fetch(`http://localhost:5000/api/todo/update/${id}`,{
+    fetch(`http://localhost:5000/api/todo/update/${id}/${taskToUpdate.isCompleted}`,{
         method:"PUT",
         credentials:"include",
             headers:{
@@ -37,22 +40,16 @@ const AllTasks:FC<TaskProps>=(props)=>{
           }
     })
     .then((response)=>response.json())
-    .then((data)=>{
-      if(data.status==200){
-      console.log(data)
+    .then((data)=>
       props.setAlertMsg("")
-    }
-  else{
-    props.setAlertMsg(data.message)
-  }
-  })
-}
+  )}
 
     function handleDelete(e:React.MouseEvent<HTMLButtonElement>,i:number,id:string){
         console.log(id)
 
         props.setTasks([...props.tasks.slice(0, i),
             ...props.tasks.slice(i + 1)]);
+
 
 
         fetch(`http://localhost:5000/api/todo/delete/${id}`,{
@@ -65,15 +62,9 @@ const AllTasks:FC<TaskProps>=(props)=>{
           }
         })
     .then((response)=>response.json())
-    .then((data)=>{ 
-      if(data.status==200){
-      console.log(data)
+    .then((data)=>
       props.setAlertMsg("")
-    }
-    else{
-      props.setAlertMsg(data.message)
-    }})
-    }
+    )}
 
     useEffect(()=>{
         fetch("http://localhost:5000/api/todo/viewAllTasks",{
@@ -87,21 +78,7 @@ const AllTasks:FC<TaskProps>=(props)=>{
         },)
         .then((response)=>response.json())
         .then((data:any)=>{
-          if(data.status!=200)
-          {
-            props.setAlertMsg(data.message)
-            return;
-          }
-            let completed_Array:Array<boolean>=[]
             props.setTasks(data.tasks)
-            let all_tasks=data.tasks;
-            for(let i=0;i<all_tasks.length;i++){
-                if(all_tasks[i].status == "Incomplete")
-                completed_Array.push(false)
-                else
-                completed_Array.push(true)
-            }
-            setCompleted(completed_Array)
             props.setAlertMsg("")
         })
 
@@ -113,7 +90,7 @@ const AllTasks:FC<TaskProps>=(props)=>{
       <tr key={task._id}>
       <th scope="row">{index+1}</th>
       <td>{task.desc}</td>
-      <td><input type="checkbox" checked={completed[index]} disabled={completed[index]} onChange={(e)=>handleCheckBox(e,index,task._id)}/></td>
+      <td><input type="checkbox" checked={task.isCompleted} onChange={(e)=>handleCheckBox(e,index,task._id)}/></td>
       <td><button className="btn btn-primary" onClick={(e)=>handleDelete(e,index,task._id)}>Delete</button></td>
     </tr>
         )
