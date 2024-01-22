@@ -19,7 +19,8 @@ router.get("/viewAllTasks",expressAsyncHandler(async (req:IRequest,res:Response)
     }
 
     const allTasks=await ToDo.find({username:username})
-    res.send(200).send(allTasks)
+    res.status(200).send({
+        "tasks":allTasks})
 }))
 
 
@@ -73,7 +74,7 @@ router.delete("/delete/:id",expressAsyncHandler(async (req:IRequest,res:Response
 }))
 
 router.put("/update/:id",expressAsyncHandler(async (req:IRequest,res:Response)=>{
-
+    
     const username=req.user.username
     if(!username)
     {

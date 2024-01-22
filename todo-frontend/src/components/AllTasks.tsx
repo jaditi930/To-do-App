@@ -1,16 +1,17 @@
-import { FC,useEffect, useState } from "react";
+import { FC,useEffect, useState,Dispatch,SetStateAction } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min";
 
 interface Task{
-    id:string,
+    username:string,
+    _id:string,
     desc:string,
     status:string
 }
 
-const AllTasks:FC<{token:string}>=()=>{
 
-    const [tasks,setTasks]=useState<Array<Task>>([])
+const AllTasks:FC<{token:string,tasks:Array<Task>,setTasks:Dispatch<SetStateAction<Array<Task>>>}>=(props)=>{
+
     const [completed,setCompleted]=useState<Array<boolean>>([])
 
     function handleCheckBox(e:React.ChangeEvent<HTMLInputElement>,i:number,id:string){
@@ -18,35 +19,57 @@ const AllTasks:FC<{token:string}>=()=>{
         setCompleted([...completed.slice(0, i),e.target.checked,
             ...completed.slice(i + 1)]);
 
-    fetch(`http://localhost:5000/api/todo/updateTask/${id}`)
+    fetch(`http://localhost:5000/api/todo/update/${id}`,{
+        method:"PUT",
+        credentials:"include",
+            headers:{
+            'Content-Type': 'application/json',
+            'Authorization':`Bearer ${props.token}`,
+          }
+    })
     .then((response)=>response.json())
     .then((data)=>console.log(data))
-    .catch((e)=>console.log(e))
+    .catch((e)=>console.log("error"))
     
     }
 
     function handleDelete(e:React.MouseEvent<HTMLButtonElement>,i:number,id:string){
+        console.log(id)
 
-        setTasks([...tasks.slice(0, i),
-            ...tasks.slice(i + 1)]);
+        props.setTasks([...props.tasks.slice(0, i),
+            ...props.tasks.slice(i + 1)]);
 
 
-        fetch(`http://localhost:5000/api/todo/deleteTask/${id}`)
+        fetch(`http://localhost:5000/api/todo/delete/${id}`,{
+            method:"DELETE",
+            credentials:"include",
+            headers:{
+            'Content-Type': 'application/json',
+            'Authorization':`Bearer ${props.token}`,
+          }
+        })
     .then((response)=>response.json())
     .then((data)=>console.log(data))
-    .catch((e)=>console.log(e))
+    .catch((e)=>console.log(e.message))
     
     }
 
     useEffect(()=>{
-        fetch("http://localhost:5000/api/todo/viewAllTasks")
+        fetch("http://localhost:5000/api/todo/viewAllTasks",{
+            credentials:"include",
+            headers:{
+            'Content-Type': 'application/json',
+            'Authorization':`Bearer ${props.token}`,
+          }
+        },)
         .then((response)=>response.json())
         .then((data)=>{
             let completed_Array:Array<boolean>=[]
-            setTasks(data.tasks)
-            for(let i in data.tasks){
-                if(data.tasks.status=="Incomplete")
-            completed_Array.push(false)
+            props.setTasks(data.tasks)
+            let all_tasks=data.tasks;
+            for(let i=0;i<all_tasks.length;i++){
+                if(all_tasks[i].status == "Incomplete")
+                completed_Array.push(false)
                 else
                 completed_Array.push(true)
             }
@@ -54,14 +77,14 @@ const AllTasks:FC<{token:string}>=()=>{
         })
     },[])
 
-    const task_rows=tasks.map((task,index)=>{
+    const task_rows=props.tasks.map((task,index)=>{
 
         return (
       <tr>
       <th scope="row">{index}</th>
       <td>{task.desc}</td>
-      <td><input type="checkbox" checked={completed[index]} onChange={(e)=>handleCheckBox(e,index,task.id)}/></td>
-      <td><button className="btn btn-primary" onClick={(e)=>handleDelete(e,index,task.id)}>Delete</button></td>
+      <td><input type="checkbox" checked={completed[index]} disabled={completed[index]} onChange={(e)=>handleCheckBox(e,index,task._id)}/></td>
+      <td><button className="btn btn-primary" onClick={(e)=>handleDelete(e,index,task._id)}>Delete</button></td>
     </tr>
         )
     })

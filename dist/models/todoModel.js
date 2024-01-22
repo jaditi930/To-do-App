@@ -11,5 +11,9 @@ const todoSchema = mongose.Schema({
         unique: true,
         required: [true, "Name is required"],
     },
+    status:{
+        type:String,
+        default:"Incomplete"
+    }
 });
 module.exports = mongose.model("Todo", todoSchema);

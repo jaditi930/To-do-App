@@ -1,7 +1,15 @@
-import { FC,useState } from 'react';
+import { FC,useState,Dispatch,SetStateAction } from 'react';
 
-const AddTasks:FC<{token:string}>=(props)=>{
-    const [desc,setdesc]=useState<string>();
+interface Task{
+  username:string,
+  _id:string,
+  desc:string,
+  status:string
+}
+
+
+const AddTasks:FC<{token:string,tasks:Array<Task>,setTasks:Dispatch<SetStateAction<Array<Task>>>}>=(props)=>{
+    const [desc,setdesc]=useState<string>("");
     return (
         <>
         <div className="flex items-center justify-center p-5">
@@ -28,10 +36,10 @@ const AddTasks:FC<{token:string}>=(props)=>{
         })
         .then((response)=>response.json())
         .then((data)=>{
-            console.log(data)
+            props.setTasks([...props.tasks,data])
         })
-        .catch((e)=>{
-            console.log(e)
+        .catch((err)=>{
+            console.log("error")
         })
         
       }}/>
