@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import expressAsyncHandler from "express-async-handler";
-import jwt, { DecodeOptions, GetPublicKeyOrSecret, Secret } from "jsonwebtoken"
+import jwt, {Secret } from "jsonwebtoken"
 import { IRequest} from "../types/custom";
 
 const validateToken=expressAsyncHandler(async (req:Request,res:Response,next:NextFunction)=>{
@@ -8,7 +8,7 @@ const validateToken=expressAsyncHandler(async (req:Request,res:Response,next:Nex
   try{
     const token=req.headers.authorization!.split(" ")[1];
     const SECRET_KEY=process.env.SECRET_KEY;
-    const decode =jwt.verify(token,SECRET_KEY as Secret|GetPublicKeyOrSecret) as any;
+    const decode =jwt.verify(token,SECRET_KEY as Secret) as any;
 
     (req as IRequest).user=decode.user;
     console.log("user validated")

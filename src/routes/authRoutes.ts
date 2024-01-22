@@ -2,7 +2,7 @@ import { Router, Request, Response } from "express";
 import expressAsyncHandler from "express-async-handler";
 const User=require("../models/userModel")
 import bcrypt from "bcrypt"
-import jwt, { GetPublicKeyOrSecret, Secret } from "jsonwebtoken"
+import jwt, {Secret } from "jsonwebtoken"
 
 const router = Router();
 
