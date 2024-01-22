@@ -19,7 +19,7 @@ router.get("/viewAllTasks",expressAsyncHandler(async (req:IRequest,res:Response)
     }
 
     const allTasks=await ToDo.find({username:username})
-    res.status(200).send(allTasks)
+    res.send(200).send(allTasks)
 }))
 
 

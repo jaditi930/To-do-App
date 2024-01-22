@@ -1,9 +1,21 @@
 import React from 'react';
+import { useState } from 'react';
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import SignUp from './components/SignUp';
+import Login from './components/Login';
+
 import './App.css';
 
 function App() {
+
+  const [token,setToken]=useState("")
   return (
-    <div>Hello, world !</div>
+    <BrowserRouter>
+    <Routes>
+      <Route path="/signup" element={<SignUp/>}/>
+      <Route path="login" element={<Login setToken={setToken}/>}/>
+    </Routes>
+  </BrowserRouter>
   );
 }
 
