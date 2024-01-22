@@ -2,6 +2,8 @@ import express from "express"
 import dotenv from "dotenv"
 import connectDb from "./dbConnection"
 import cors from "cors"
+const errorHandler=require("./middleware/errorHandler")
+
 
 dotenv.config()
 
@@ -22,6 +24,9 @@ connectDb();
 app.use("/api/user/",require("./routes/authRoutes"))
 
 app.use("/api/todo/",require("./routes/todoRoutes"))
+
+app.use(errorHandler)
+
 
 const PORT=process.env.PORT
 

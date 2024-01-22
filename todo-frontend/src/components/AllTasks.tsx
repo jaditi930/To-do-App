@@ -9,8 +9,16 @@ interface Task{
     status:string
 }
 
+interface TaskProps{
+  token:string,
+    tasks:Array<Task>,
+    setTasks:Dispatch<SetStateAction<Array<Task>>>,
+    setAlertMsg:Dispatch<SetStateAction<string>>,
 
-const AllTasks:FC<{token:string,tasks:Array<Task>,setTasks:Dispatch<SetStateAction<Array<Task>>>}>=(props)=>{
+}
+
+
+const AllTasks:FC<TaskProps>=(props)=>{
 
     const [completed,setCompleted]=useState<Array<boolean>>([])
 
@@ -24,14 +32,21 @@ const AllTasks:FC<{token:string,tasks:Array<Task>,setTasks:Dispatch<SetStateActi
         credentials:"include",
             headers:{
             'Content-Type': 'application/json',
-            'Authorization':`Bearer ${props.token}`,
+            'Authorization':`Bearer ${localStorage.getItem("token")}`,
+            'Accept': 'application/json',
           }
     })
     .then((response)=>response.json())
-    .then((data)=>console.log(data))
-    .catch((e)=>console.log("error"))
-    
+    .then((data)=>{
+      if(data.status==200){
+      console.log(data)
+      props.setAlertMsg("")
     }
+  else{
+    props.setAlertMsg(data.message)
+  }
+  })
+}
 
     function handleDelete(e:React.MouseEvent<HTMLButtonElement>,i:number,id:string){
         console.log(id)
@@ -45,13 +60,19 @@ const AllTasks:FC<{token:string,tasks:Array<Task>,setTasks:Dispatch<SetStateActi
             credentials:"include",
             headers:{
             'Content-Type': 'application/json',
-            'Authorization':`Bearer ${props.token}`,
+            'Authorization':`Bearer ${localStorage.getItem("token")}`,
+            'Accept': 'application/json',
           }
         })
     .then((response)=>response.json())
-    .then((data)=>console.log(data))
-    .catch((e)=>console.log(e.message))
-    
+    .then((data)=>{ 
+      if(data.status==200){
+      console.log(data)
+      props.setAlertMsg("")
+    }
+    else{
+      props.setAlertMsg(data.message)
+    }})
     }
 
     useEffect(()=>{
@@ -59,11 +80,18 @@ const AllTasks:FC<{token:string,tasks:Array<Task>,setTasks:Dispatch<SetStateActi
             credentials:"include",
             headers:{
             'Content-Type': 'application/json',
-            'Authorization':`Bearer ${props.token}`,
+            'Authorization':`Bearer ${localStorage.getItem("token")}`,
+            'Accept': 'application/json',
+
           }
         },)
         .then((response)=>response.json())
-        .then((data)=>{
+        .then((data:any)=>{
+          if(data.status!=200)
+          {
+            props.setAlertMsg(data.message)
+            return;
+          }
             let completed_Array:Array<boolean>=[]
             props.setTasks(data.tasks)
             let all_tasks=data.tasks;
@@ -74,14 +102,16 @@ const AllTasks:FC<{token:string,tasks:Array<Task>,setTasks:Dispatch<SetStateActi
                 completed_Array.push(true)
             }
             setCompleted(completed_Array)
+            props.setAlertMsg("")
         })
+
     },[])
 
     const task_rows=props.tasks.map((task,index)=>{
 
         return (
-      <tr>
-      <th scope="row">{index}</th>
+      <tr key={task._id}>
+      <th scope="row">{index+1}</th>
       <td>{task.desc}</td>
       <td><input type="checkbox" checked={completed[index]} disabled={completed[index]} onChange={(e)=>handleCheckBox(e,index,task._id)}/></td>
       <td><button className="btn btn-primary" onClick={(e)=>handleDelete(e,index,task._id)}>Delete</button></td>
@@ -90,7 +120,8 @@ const AllTasks:FC<{token:string,tasks:Array<Task>,setTasks:Dispatch<SetStateActi
     })
     return (
         <>
-    <table className="table table-primary table-striped">
+    <h1 className="text-4xl text-center">My Tasks</h1>
+    <table className="table table-striped">
   <thead>
     <tr>
       <th scope="col">S.NO</th>

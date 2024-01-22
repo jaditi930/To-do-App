@@ -1,8 +1,10 @@
+import { AnyRecord } from "dns"
 import { FC,useState,Dispatch, SetStateAction } from "react"
 import {Link,useNavigate} from "react-router-dom"
 
 interface LoginProps{
-    setToken: Dispatch<SetStateAction<string>>
+    setToken: Dispatch<SetStateAction<string>>,
+    setAlertMsg:Dispatch<SetStateAction<string>>,
 }
 
 const Login:FC<LoginProps> = (props) => {
@@ -17,7 +19,8 @@ const Login:FC<LoginProps> = (props) => {
           method:"POST",
           credentials:"include",
           headers:{
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
           },
           body:JSON.stringify({
             "username":username,
@@ -26,17 +29,22 @@ const Login:FC<LoginProps> = (props) => {
         })
         .then((response)=>response.json())
         .then((data)=>{
+           if(data.token)
+           {
             console.log(data.token)
             props.setToken(data.token)
+            localStorage.setItem("token",data.token)
             navigate("/home")
-        })
-        .catch((e)=>{
-            console.log("error")
+            props.setAlertMsg("")
+           }
+           else{
+            props.setAlertMsg(data.message)
+           }
         })
     }
 
     return (
-        <div className="flex justify-center">
+        <div className="flex justify-center h-100 ">
         
     <form className="form" onSubmit={(e)=>handleSubmit(e)}>
 

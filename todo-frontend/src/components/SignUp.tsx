@@ -1,8 +1,13 @@
-import { FC,useState } from "react"
+import { FC,useState,Dispatch,SetStateAction } from "react"
 import {useNavigate} from "react-router"
 import { Link } from "react-router-dom"
 
-const SignUp:FC=()=>{
+interface SignUpProps{
+  setAlertMsg:Dispatch<SetStateAction<string>>
+
+}
+
+const SignUp:FC<SignUpProps>=(props)=>{
     const [username,setUsername]=useState<string>("")
     const [password,setPassword]=useState<string>("")
     const navigate=useNavigate()
@@ -13,19 +18,22 @@ const SignUp:FC=()=>{
           body:JSON.stringify({
             "username":username,
             "password":password
-          })
+          }),
+          headers:{
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+          },
         })
         .then((response)=>response.json())
-        .then((data)=>{
-            console.log(data)
+        .then((data:any)=>{
+          if(data.status==200){
             navigate("/login")
-        })
-        .catch((e)=>{
-            console.log(e)
+          }
+          props.setAlertMsg(data.message)
         })
     }
     return (
-        <div className="flex justify-center">
+        <div className="flex justify-center h-100">
     <form className="form" onSubmit={(e)=>handleSubmit(e)}>
 
         <p className="text-3xl text-center font-bold p-3">Welcome to ToDo App</p>

@@ -7,14 +7,22 @@ interface Task{
   status:string
 }
 
+interface AddProps{
+  token:string,
+  tasks:Array<Task>,
+  setTasks:Dispatch<SetStateAction<Array<Task>>>,
+  setAlertMsg:Dispatch<SetStateAction<string>>,
+}
 
-const AddTasks:FC<{token:string,tasks:Array<Task>,setTasks:Dispatch<SetStateAction<Array<Task>>>}>=(props)=>{
+
+const AddTasks:FC<AddProps>=(props)=>{
     const [desc,setdesc]=useState<string>("");
     return (
         <>
         <div className="flex items-center justify-center p-5">
     <div className="flex">
-      <input type="text" className="min-w-[460px] bg-gray-100 pl-2 text-base font-semibold outline-0" placeholder="" id=""
+      <input type="text" className="min-w-[500px] bg-gray-100 pl-2 text-base font-semibold outline-0" 
+      placeholder="Enter task here" 
       value={desc}
       onChange={
         (e:React.ChangeEvent<HTMLInputElement>)=>setdesc(e.target.value)
@@ -36,11 +44,15 @@ const AddTasks:FC<{token:string,tasks:Array<Task>,setTasks:Dispatch<SetStateActi
         })
         .then((response)=>response.json())
         .then((data)=>{
+              if(data.status==200){
             props.setTasks([...props.tasks,data])
+            props.setAlertMsg("")
+              }
+              else{
+                props.setAlertMsg(data.message)
+              }
         })
-        .catch((err)=>{
-            console.log("error")
-        })
+
         
       }}/>
     </div>

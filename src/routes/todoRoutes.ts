@@ -13,9 +13,9 @@ router.get("/viewAllTasks",expressAsyncHandler(async (req:IRequest,res:Response)
     const username=req.user.username
     if(!username)
     {
-        res.status(400).send({
-        "message":"User is not authorized"
-        })
+        res.status(400)
+        throw new Error("User is not authorized")
+
     }
 
     const allTasks=await ToDo.find({username:username})
@@ -29,9 +29,8 @@ router.post("/add",expressAsyncHandler(async (req:IRequest,res:Response)=>{
     const username=req.user.username
     if(!username)
     {
-        res.status(400).send({
-        "message":"User is not authorized"
-        })
+        res.status(400)
+        throw new Error("User is not authorized")
     }
 
     const {desc}=req.body;
