@@ -25,7 +25,7 @@ const SignUp:FC=()=>{
         })
     }
     return (
-        <>
+        <div className="flex justify-center">
     <form className="form" onSubmit={(e)=>handleSubmit(e)}>
 
         <p className="text-3xl text-center font-bold p-3">Welcome to ToDo App</p>
@@ -60,7 +60,7 @@ const SignUp:FC=()=>{
       </p>
    </form>
 
-        </>
+        </div>
     )
 }
 export default SignUp;

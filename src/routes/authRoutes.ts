@@ -32,6 +32,7 @@ router.post("/signup",expressAsyncHandler(async (req:Request,res:Response)=>{
 
 router.post("/login",expressAsyncHandler(async (req:Request,res:Response)=>{
     const {username,password}=req.body
+    console.log(username,password)
     if(!username||!password)
     {
         res.status(400)

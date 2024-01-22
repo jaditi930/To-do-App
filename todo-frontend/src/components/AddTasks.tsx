@@ -1,6 +1,6 @@
 import { FC,useState } from 'react';
 
-const AddTasks:FC=()=>{
+const AddTasks:FC<{token:string}>=(props)=>{
     const [desc,setdesc]=useState<string>();
     return (
         <>
@@ -17,6 +17,11 @@ const AddTasks:FC=()=>{
         e.preventDefault();
         fetch("http://localhost:5000/api/todo/add",{
             method:"POST",
+            credentials:"include",
+            headers:{
+            'Content-Type': 'application/json',
+            'Authorization':`Bearer ${props.token}`,
+          },
             body:JSON.stringify({
                 "desc":desc
             })

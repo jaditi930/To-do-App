@@ -11,8 +11,14 @@ const Login:FC<LoginProps> = (props) => {
     const navigate=useNavigate()
 
         function handleSubmit(e:React.FormEvent<HTMLFormElement>){
+          e.preventDefault()
+          console.log(username,password)
         fetch("http://localhost:5000/api/user/login",{
           method:"POST",
+          credentials:"include",
+          headers:{
+            'Content-Type': 'application/json'
+          },
           body:JSON.stringify({
             "username":username,
             "password":password
@@ -30,7 +36,7 @@ const Login:FC<LoginProps> = (props) => {
     }
 
     return (
-        <>
+        <div className="flex justify-center">
         
     <form className="form" onSubmit={(e)=>handleSubmit(e)}>
 
@@ -66,7 +72,7 @@ const Login:FC<LoginProps> = (props) => {
       </p>
    </form>
 
-        </>
+        </div>
     )
 }
 export default Login;
