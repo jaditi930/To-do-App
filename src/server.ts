@@ -1,10 +1,7 @@
-export {}
-
-import express from "express"
-import dotenv from "dotenv"
+const express=require("express")
+require("dotenv").config()
 import connectDb from "./dbConnection"
 
-dotenv.config()
 
 const app = express();
 
