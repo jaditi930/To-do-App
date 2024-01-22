@@ -45,7 +45,7 @@ const AddTasks:FC<AddProps>=(props)=>{
         })
         .then((response)=>response.json())
         .then((data)=>{
-            props.setTasks([...props.tasks,data])
+            props.setTasks([...props.tasks,data.newTask])
             props.setAlertMsg("")
             setdesc("")
         })

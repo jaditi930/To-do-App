@@ -40,8 +40,12 @@ const AllTasks:FC<TaskProps>=(props)=>{
           }
     })
     .then((response)=>response.json())
-    .then((data)=>
+    .then((data)=>{
+    if(data.success)
       props.setAlertMsg("")
+    else
+    props.setAlertMsg(data.message)
+    }
   )}
 
     function handleDelete(e:React.MouseEvent<HTMLButtonElement>,i:number,id:string){
@@ -62,8 +66,12 @@ const AllTasks:FC<TaskProps>=(props)=>{
           }
         })
     .then((response)=>response.json())
-    .then((data)=>
-      props.setAlertMsg("")
+    .then((data)=>{
+    if(data.success)
+    props.setAlertMsg("")
+  else
+  props.setAlertMsg(data.message)
+    }
     )}
 
     useEffect(()=>{
@@ -78,8 +86,13 @@ const AllTasks:FC<TaskProps>=(props)=>{
         },)
         .then((response)=>response.json())
         .then((data:any)=>{
+           if(data.success){
             props.setTasks(data.tasks)
             props.setAlertMsg("")
+           }
+           else{
+            props.setAlertMsg(data.message)
+           }
         })
 
     },[])

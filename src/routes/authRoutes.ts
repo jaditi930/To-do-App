@@ -26,7 +26,10 @@ router.post("/signup",expressAsyncHandler(async (req:Request,res:Response)=>{
     throw new Error("User data us not valid");
     }
     console.log(newUser)
-    res.status(200).json(newUser)
+    res.status(200).json({
+        "success":true,
+        "newUser":newUser
+    })
 
 }))
 
@@ -56,7 +59,10 @@ router.post("/login",expressAsyncHandler(async (req:Request,res:Response)=>{
     }},process.env.SECRET_KEY as Secret,{
         expiresIn:"1h"
     })
-    res.status(200).json({"token":accessToken});
+    res.status(200).json({
+        "success":true,
+        "token":accessToken
+    });
 }))
 
 
